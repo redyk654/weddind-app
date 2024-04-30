@@ -6,6 +6,7 @@ import RegisterForm from '../shared/components/RegisterForm';
 import { useNavigate } from 'react-router-dom';
 import GoogleButton from '../shared/components/GoogleButton';
 import useAuth from '../hooks/useAuth';
+import BackToHome from '../shared/components/BackToHome';
 
 const auth = firebase.auth();
 
@@ -27,11 +28,11 @@ export default function SignUp() {
             displayName: displayName,
             email: email
           });
-          navigate('/evenements');
+          navigate('/layoutnavbar/evenements');
         }
         if (user) {
           // Si un utilisateur est déjà connecté, rediriger directement vers la page d'événements
-          navigate('/evenements');
+          navigate('/layoutnavbar/evenements');
           return; // Arrêter l'exécution de la fonction
         }
       } catch (error) {
@@ -43,8 +44,12 @@ export default function SignUp() {
   }, [user, navigate]);
 
   const handleGoogleSignUp = () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    firebase.auth().signInWithRedirect(provider);
+    try {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      firebase.auth().signInWithPopup(provider)
+    } catch (error) {
+      console.error("Erreur lors de l'authentification avec Google", error);
+    }
   };
 
   const handleSignUpWithEmailAndPassword = () => {
@@ -64,7 +69,7 @@ export default function SignUp() {
           email: email
         });
         
-        navigate('/evenements')
+        navigate('/layoutnavbar/evenements')
       } catch (error) {
         console.error("Error updating profile:", error);
       }
@@ -90,6 +95,7 @@ export default function SignUp() {
   return (
     <Container className='pt-4'>
       <div>
+        <BackToHome />
         <h1>Inscription</h1>
       </div>
       <RegisterForm 

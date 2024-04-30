@@ -5,6 +5,7 @@ import GoogleButton from '../shared/components/GoogleButton';
 import firebase from '../firebase';
 import useAuth from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import BackToHome from '../shared/components/BackToHome';
 
 const auth = firebase.auth();
 
@@ -18,7 +19,7 @@ export default function SignIn() {
 
   useEffect(() => {
     if (user) {
-      navigate('/evenements');
+      navigate('/layoutnavbar/evenements');
     }
   }, [user, navigate]);
 
@@ -31,20 +32,26 @@ export default function SignIn() {
   }
 
   const handleGoogleSignIn = () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    firebase.auth().signInWithPopup(provider)
+    try {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      firebase.auth().signInWithPopup(provider)
+    } catch (error) {
+      console.error("Erreur lors de l'authentification avec Google", error);
+    }
   }
 
   const handleSignInWithEmailAndPassword = () => {
+    registerFormRef.current.setisHandlingSubmitValue(true);
     const email = registerFormRef.current.getEmailValue();
     const password = registerFormRef.current.getPasswordValue();
 
     auth.signInWithEmailAndPassword(email, password)
     .then((userCredential) => {
-      const user = userCredential.user;
-      console.log('Utilisateur connecté', user);
+      registerFormRef.current.setisHandlingSubmitValue(false);
+      navigate('/layoutnavbar/evenements');
     })
     .catch((error) => {
+      registerFormRef.current.setisHandlingSubmitValue(false);
       console.error('Erreur lors de la connexion', error);
     })
   }
@@ -52,6 +59,7 @@ export default function SignIn() {
   return (
     <Container className='pt-4'>
       <div>
+        <BackToHome />
         <h1>Connexion</h1>
       </div>
       <RegisterForm

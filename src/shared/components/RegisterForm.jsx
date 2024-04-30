@@ -13,11 +13,13 @@ const RegisterForm = forwardRef(({ handleSubmit, register }, ref) => {
     const [email, setEmail] = useState('');
     const [displayName, setDisplayName] = useState('');
     const [password, setPassword] = useState('');
+    const [isHandlingSubmit, setIsHandlingSubmit] = useState(false);
 
     useImperativeHandle(ref, () => ({
         getEmailValue: () => emailRef.current.value,
         getDisplayNameValue: () => displayNameRef.current.value,
-        getPasswordValue: () => passwordRef.current.value
+        getPasswordValue: () => passwordRef.current.value,
+        setisHandlingSubmitValue: (value) => setIsHandlingSubmit(value)
     }));
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -42,9 +44,10 @@ const RegisterForm = forwardRef(({ handleSubmit, register }, ref) => {
         setDisplayName('');
     }
 
-    const thisHandleSubmit = (e) => {
+    const thisHandleSubmit = async (e) => {
         e.preventDefault();
-        handleSubmit();
+        setIsHandlingSubmit(true);
+        await handleSubmit();
         clearForm();
     }
 
@@ -88,6 +91,7 @@ const RegisterForm = forwardRef(({ handleSubmit, register }, ref) => {
                     label="mot de passe"
                     type={showPassword ? 'text' : 'password'}
                     variant="outlined"
+                    autoComplete='off'
                     fullWidth
                     InputProps={{
                     endAdornment : (
@@ -107,7 +111,7 @@ const RegisterForm = forwardRef(({ handleSubmit, register }, ref) => {
                 </div>
             </Grid>
             <Grid item xs={12}>
-                <RegisterButton>
+                <RegisterButton isHandlingSubmit={isHandlingSubmit}>
                     {register ? "S'inscrire" : "Se connecter"}
                 </RegisterButton>
             </Grid>
