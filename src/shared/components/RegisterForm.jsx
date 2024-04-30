@@ -39,6 +39,7 @@ const RegisterForm = forwardRef(({ handleSubmit, register }, ref) => {
     const clearForm = () => {
         setEmail('');
         setPassword('');
+        setDisplayName('');
     }
 
     const thisHandleSubmit = (e) => {
@@ -106,7 +107,9 @@ const RegisterForm = forwardRef(({ handleSubmit, register }, ref) => {
                 </div>
             </Grid>
             <Grid item xs={12}>
-                <RegisterButton>S'inscrire</RegisterButton>
+                <RegisterButton>
+                    {register ? "S'inscrire" : "Se connecter"}
+                </RegisterButton>
             </Grid>
         </Grid>
     </form>
