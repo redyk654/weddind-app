@@ -1,3 +1,4 @@
+import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import { Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
@@ -7,6 +8,7 @@ import { Evenement } from './pages/Evenement';
 import Evenements from './pages/Evenements';
 import CreateEvent from './pages/CreateEvent';
 import LayoutNavBar from './layouts/LayoutNavBar';
+import AddGuest from './pages/AddGuest';
 
 function App() {
   return (
@@ -20,6 +22,7 @@ function App() {
           <Route path=':eventId' element={<Evenement />} />
         </Route>
         <Route path='evenements/:userId/create' element={<CreateEvent />} />
+        <Route path='evenements/:eventId/addguest' element={<AddGuest />} />
       </Route>
       
       <Route path="*" element={<h1>Not Found</h1>} />

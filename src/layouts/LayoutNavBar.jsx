@@ -36,8 +36,9 @@ export default function LayoutNavBar() {
                             <ArrowBackIosRoundedIcon color='primary' />
                             retour
                         </Button>
-                      <p>
-                        Bienvenue <strong className='text-uppercase'>{user.displayName}</strong></p>
+                        <p>
+                            Bienvenue <strong className='text-uppercase'>{user.displayName}</strong>
+                        </p>
                     </Box>
                     <Box>
                         <Button
@@ -50,7 +51,7 @@ export default function LayoutNavBar() {
                         </Button>
                     </Box>
                 </Box>
-                <Container>
+                <Container className='mt-2'>
                     <Outlet />
                 </Container>
             </div>

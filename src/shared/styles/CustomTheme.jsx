@@ -26,5 +26,11 @@ export const theme = createTheme({
             dark: alpha('#FF5733', 0.8),
             contrastText: getContrastRatio('#FF5733', '#ffffff') >= 3 ? '#ffffff' : '#000000'
         },
+        light: {
+            main: '#ffffff',
+            light: alpha('#ffffff', 0.4),
+            dark: alpha('#ffffff', 0.8),
+            contrastText: getContrastRatio('#ffffff', '#000000') >= 3 ? '#000000' : '#ffffff'
+        },
     },
 });

@@ -94,18 +94,18 @@ const RegisterForm = forwardRef(({ handleSubmit, register }, ref) => {
                     autoComplete='off'
                     fullWidth
                     InputProps={{
-                    endAdornment : (
-                        <InputAdornment position="start">
-                            <IconButton
-                                aria-label="toggle password visibility"
-                                onClick={handleClickShowPassword}
-                                onMouseDown={handleMouseDownPassword}
-                                edge="start"
-                            >
-                                {showPassword ? <VisibilityOff /> : <Visibility />}
-                            </IconButton>
-                        </InputAdornment>
-                    )
+                        endAdornment : (
+                            <InputAdornment position="start">
+                                <IconButton
+                                    aria-label="toggle password visibility"
+                                    onClick={handleClickShowPassword}
+                                    onMouseDown={handleMouseDownPassword}
+                                    edge="start"
+                                >
+                                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                                </IconButton>
+                            </InputAdornment>
+                        )
                     }}
                 />
                 </div>

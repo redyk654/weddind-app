@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { Outlet, useNavigate, useParams } from 'react-router-dom'
-import { Button } from '@mui/material'
+import { Button, Grid } from '@mui/material'
 import useAuth from '../hooks/useAuth'
 import AddIcon from '@mui/icons-material/Add'
 import firebase from '../firebase'
+import CardEvent from '../components/Evenements/CardEvent'
 
 export default function Evenements() {
     const { eventId } = useParams();
@@ -16,7 +17,7 @@ export default function Evenements() {
       if (user) {
         fecthEvents()
       }
-    }, [user])
+    })
 
     const fecthEvents = async () => {
       try {
@@ -29,7 +30,7 @@ export default function Evenements() {
         }
         const tempList = []
         snapshot.forEach(doc => {
-            tempList.push(doc.data())
+          tempList.push({ id: doc.id, data: doc.data() });
         });
         setEventsList(tempList)
       } catch (error) {
@@ -47,7 +48,7 @@ export default function Evenements() {
     return (
       <div>
           <div>
-            <h1>Evenements</h1>
+            <h1>Evènements</h1>
             <Button
               onClick={() => navigate(`/layoutnavbar/evenements/${user.uid}/create`)}
               variant="contained"
@@ -57,6 +58,14 @@ export default function Evenements() {
             >
               Ajouter un evenement
             </Button>
+            <Grid className='mt-3' container spacing={2}>
+              {eventsList.map((event, index) => (
+                <CardEvent
+                  key={index}
+                  event={event}
+                />
+              ))}
+            </Grid>
           </div>
       </div>
     )
