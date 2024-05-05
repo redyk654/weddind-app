@@ -61,15 +61,11 @@ export default function AddGuest() {
         setHelperTextNom('');
         setHelperTextTable('');
         const formatNom = nom.trim().toUpperCase();
-        const formatTable = table.trim().toUpperCase();
+        // const formatTable = table.trim().toUpperCase();
         const guestQuery = await guestListRef.where('nom', '==', formatNom).get();
-        const tableQuery = await guestListRef.where('table', '==', formatTable).get();
+        // const tableQuery = await guestListRef.where('table', '==', formatTable).get();
         if (!guestQuery.empty) {
             setHelperTextNom("Un invité avec le même nom existe déjà.");
-            setisHandlingSubmit(false);
-            return true;
-        } else if (!tableQuery.empty) {
-            setHelperTextTable("La table est déjà occupée.");
             setisHandlingSubmit(false);
             return true;
         }
@@ -88,6 +84,7 @@ export default function AddGuest() {
                 nom: formatNom,
                 table: formatTable,
                 qrContent: qrContent,
+                statut: 'unchecked',
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
         } catch (error) {

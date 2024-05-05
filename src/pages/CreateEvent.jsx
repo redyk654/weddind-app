@@ -65,6 +65,7 @@ export default function CreateEvent() {
             dateEvent: dateEvent,
             userId: userId,
             fileUrl: fileUrl,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
           })
           
           clearForm();

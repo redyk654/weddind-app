@@ -13,13 +13,18 @@ const RegisterForm = forwardRef(({ handleSubmit, register }, ref) => {
     const [email, setEmail] = useState('');
     const [displayName, setDisplayName] = useState('');
     const [password, setPassword] = useState('');
+    const [helperTextEmail, setHelperTextEmail] = useState('');
+    const [helperTextPassword, setHelperTextPassword] = useState('');
     const [isHandlingSubmit, setIsHandlingSubmit] = useState(false);
 
     useImperativeHandle(ref, () => ({
         getEmailValue: () => emailRef.current.value,
         getDisplayNameValue: () => displayNameRef.current.value,
         getPasswordValue: () => passwordRef.current.value,
-        setisHandlingSubmitValue: (value) => setIsHandlingSubmit(value)
+        setisHandlingSubmitValue: (value) => setIsHandlingSubmit(value),
+        clearForm: () => clearForm(),
+        setHelperTextEmail: (value) => setHelperTextEmail(value),
+        setHelperTextPassword: (value) => setHelperTextPassword(value)
     }));
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -48,7 +53,6 @@ const RegisterForm = forwardRef(({ handleSubmit, register }, ref) => {
         e.preventDefault();
         setIsHandlingSubmit(true);
         await handleSubmit();
-        clearForm();
     }
 
   return (
@@ -60,6 +64,8 @@ const RegisterForm = forwardRef(({ handleSubmit, register }, ref) => {
                     inputRef={emailRef}
                     value={email}
                     onChange={handleEmailChange}
+                    error={helperTextEmail !== ''}
+                    helperText={helperTextEmail}
                     id="email"
                     label="email"
                     type="email"
@@ -87,6 +93,8 @@ const RegisterForm = forwardRef(({ handleSubmit, register }, ref) => {
                     inputRef={passwordRef}
                     value={password}
                     onChange={handlePasswordChange}
+                    error={helperTextPassword !== ''}
+                    helperText={helperTextPassword}
                     id="password"
                     label="mot de passe"
                     type={showPassword ? 'text' : 'password'}

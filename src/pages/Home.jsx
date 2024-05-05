@@ -8,8 +8,10 @@ export default function Home() {
     <Container maxWidth="" className='pt-4'>
       <div>
         <div>
-          <p className='h1 text-center'>Bienvenue sur <strong>WeddingApp</strong></p>
-          <p className='h3 text-center'>Organisez votre mariage en toute simplicité</p>
+          <p className='h1 text-center'>Bienvenue sur <strong>EventApp</strong></p>
+          <p className='h3 text-center'>
+            Organisez les invités de vos évènements et planifier en toute simplicité
+          </p>
         </div>
         <Grid container spacing={2} className='mt-3'>
           <Grid item xs={6} sm={6}>

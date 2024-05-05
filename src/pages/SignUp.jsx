@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import GoogleButton from '../shared/components/GoogleButton';
 import useAuth from '../hooks/useAuth';
 import BackToHome from '../shared/components/BackToHome';
+import { firebaseErrorsCodes } from '../shared/constants/Constants';
 
 const auth = firebase.auth();
 
@@ -56,6 +57,8 @@ export default function SignUp() {
     const email = registerFormRef.current.getEmailValue();
     const displayName = registerFormRef.current.getDisplayNameValue();
     const password = registerFormRef.current.getPasswordValue();
+    registerFormRef.current.setHelperTextEmail('');
+    registerFormRef.current.setHelperTextPassword('');
     
     auth.createUserWithEmailAndPassword(email, password)
     .then(async (userCredential) => {
@@ -68,16 +71,21 @@ export default function SignUp() {
           displayName: displayName,
           email: email
         });
-        
+
         navigate('/layoutnavbar/evenements')
       } catch (error) {
+        registerFormRef.current.setisHandlingSubmitValue(false);
         console.error("Error updating profile:", error);
       }
     })
     .catch((error) => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      console.error(errorCode, errorMessage);
+      if (error.code === 'auth/email-already-in-use') {
+        registerFormRef.current.setHelperTextEmail(firebaseErrorsCodes[error.code]);
+      }
+      if (error.code === 'auth/weak-password') {
+        registerFormRef.current.setHelperTextPassword(firebaseErrorsCodes[error.code]);
+      }
+      registerFormRef.current.setisHandlingSubmitValue(false);
     });
 
   }

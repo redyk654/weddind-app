@@ -3,7 +3,6 @@ import React, { forwardRef, useRef, useState } from 'react'
 import { QRCodeSVG } from 'qrcode.react';
 import { toPng } from 'html-to-image';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
-import CustomizedSnackbars from './CustomizedSnackbars';
 
 const style = {
     position: 'absolute',
