@@ -1,4 +1,4 @@
-import { Badge, Button, Grid, InputAdornment, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material'
+import { Alert, Backdrop, Badge, Button, CircularProgress, Grid, InputAdornment, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
@@ -99,17 +99,23 @@ export const Evenement = () => {
 
   return (
     <div>
-      <Snackbar
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={isSnackBar}
-        autoHideDuration={15000}
-        onClose={handleCloseSnackBar}
-        message={`
+        onClick={handleCloseSnackBar}
+      >
+        <Snackbar
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          open={isSnackBar}
+          autoHideDuration={15000}
+          onClose={handleCloseSnackBar}
+          message={`
           ${textInSnackBar}
           ${guestFound.nom.length > 0 && `Nom: ${guestFound.nom}`}
           ${guestFound.nom.length > 0 && `Table: ${guestFound.table}`}
         `}
-      />
+        />
+      </Backdrop>
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <div className={`${!isScanning && 'd-none'}`}>
