@@ -1,15 +1,13 @@
 import { Container } from '@mui/material'
 import React, { useEffect, useRef } from 'react'
 import firebase from '../firebase';
-import 'firebase/auth';
 import RegisterForm from '../shared/components/RegisterForm';
 import { useNavigate } from 'react-router-dom';
 import GoogleButton from '../shared/components/GoogleButton';
 import useAuth from '../hooks/useAuth';
 import BackToHome from '../shared/components/BackToHome';
 import { firebaseErrorsCodes } from '../shared/constants/Constants';
-
-const auth = firebase.auth();
+import { authWithEmailAndPasswordCreateUser, authWithGoogle, storeUserInFirestore } from '../requests/RAuthentication';
 
 export default function SignUp() {
 
@@ -25,16 +23,12 @@ export default function SignUp() {
         const result = await firebase.auth().getRedirectResult();
         if (result.user) {
           const { displayName, email } = result.user;
-          await firebase.firestore().collection('users').doc(result.user.uid).set({
-            displayName: displayName,
-            email: email
-          });
-          navigate('/layoutnavbar/evenements');
-        }
+          await storeUserInFirestore(result.user, displayName, email);
+          navigate('/layoutnavbar/evenements');}
         if (user) {
           // Si un utilisateur est déjà connecté, rediriger directement vers la page d'événements
           navigate('/layoutnavbar/evenements');
-          return; // Arrêter l'exécution de la fonction
+          return;
         }
       } catch (error) {
         console.error(error);
@@ -46,8 +40,7 @@ export default function SignUp() {
 
   const handleGoogleSignUp = () => {
     try {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      firebase.auth().signInWithPopup(provider)
+      authWithGoogle();
     } catch (error) {
       console.error("Erreur lors de l'authentification avec Google", error);
     }
@@ -60,17 +53,16 @@ export default function SignUp() {
     registerFormRef.current.setHelperTextEmail('');
     registerFormRef.current.setHelperTextPassword('');
     
-    auth.createUserWithEmailAndPassword(email, password)
+    authWithEmailAndPasswordCreateUser(email, password)
     .then(async (userCredential) => {
       const user = userCredential.user;
       try {
+
         await user.updateProfile({
           displayName: displayName
         });
-        await firebase.firestore().collection('users').doc(user.uid).set({
-          displayName: displayName,
-          email: email
-        });
+
+        await storeUserInFirestore(user, displayName, email);
 
         navigate('/layoutnavbar/evenements')
       } catch (error) {
@@ -87,7 +79,6 @@ export default function SignUp() {
       }
       registerFormRef.current.setisHandlingSubmitValue(false);
     });
-
   }
 
   if (loading) {

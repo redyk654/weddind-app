@@ -60,62 +60,68 @@ const RegisterForm = forwardRef(({ handleSubmit, register }, ref) => {
         <Grid container spacing={3} className='mt-3'>
             <Grid item xs={12}>
                 <div className=''>
-                <TextField
-                    inputRef={emailRef}
-                    value={email}
-                    onChange={handleEmailChange}
-                    error={helperTextEmail !== ''}
-                    helperText={helperTextEmail}
-                    id="email"
-                    label="email"
-                    type="email"
-                    variant="outlined"
-                    fullWidth
-                />
+                    <TextField
+                        required
+                        inputRef={emailRef}
+                        value={email}
+                        onChange={handleEmailChange}
+                        error={helperTextEmail !== ''}
+                        helperText={helperTextEmail}
+                        id="email"
+                        name='email'
+                        label="email"
+                        type="email"
+                        variant="outlined"
+                        fullWidth
+                    />
                 </div>
             </Grid>
             <Grid item xs={12} className={`${register ? '' : 'd-none'}`}>
                 <div className=''>
-                <TextField
-                    inputRef={displayNameRef}
-                    value={displayName}
-                    onChange={(e) => setDisplayName(e.target.value)}
-                    id="displayName"
-                    label="nom d'utilisateur"
-                    variant="outlined"
-                    fullWidth
-                />
+                    <TextField
+                        required={register}
+                        inputRef={displayNameRef}
+                        value={displayName}
+                        onChange={(e) => setDisplayName(e.target.value)}
+                        id="displayName"
+                        name='displayName'
+                        label="nom d'utilisateur"
+                        variant="outlined"
+                        fullWidth
+                    />
                 </div>
             </Grid>
             <Grid item xs={12}>
                 <div className=''>
-                <TextField
-                    inputRef={passwordRef}
-                    value={password}
-                    onChange={handlePasswordChange}
-                    error={helperTextPassword !== ''}
-                    helperText={helperTextPassword}
-                    id="password"
-                    label="mot de passe"
-                    type={showPassword ? 'text' : 'password'}
-                    variant="outlined"
-                    autoComplete='off'
-                    fullWidth
-                    InputProps={{
-                        endAdornment : (
-                            <InputAdornment position="start">
-                                <IconButton
-                                    aria-label="toggle password visibility"
-                                    onClick={handleClickShowPassword}
-                                    onMouseDown={handleMouseDownPassword}
-                                    edge="start"
-                                >
-                                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                                </IconButton>
-                            </InputAdornment>
-                        )
-                    }}
-                />
+                    <TextField
+                        required
+                        inputRef={passwordRef}
+                        value={password}
+                        onChange={handlePasswordChange}
+                        error={helperTextPassword !== ''}
+                        helperText={helperTextPassword}
+                        id="password"
+                        name='password'
+                        label="mot de passe"
+                        type={showPassword ? 'text' : 'password'}
+                        variant="outlined"
+                        autoComplete='off'
+                        fullWidth
+                        InputProps={{
+                            endAdornment : (
+                                <InputAdornment position="start">
+                                    <IconButton
+                                        aria-label="toggle password visibility"
+                                        onClick={handleClickShowPassword}
+                                        onMouseDown={handleMouseDownPassword}
+                                        edge="start"
+                                    >
+                                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                                    </IconButton>
+                                </InputAdornment>
+                            )
+                        }}
+                    />
                 </div>
             </Grid>
             <Grid item xs={12}>

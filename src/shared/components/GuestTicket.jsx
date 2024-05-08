@@ -90,7 +90,6 @@ const GuestTicket = forwardRef(({ imageUrl, qrContent, nom, handleCloseModalQrCo
         >
             <img
                 src={imageUrl}
-                // className='w-100 h-100'
                 style={{
                     width: '100%',
                     height: '100%',
@@ -103,8 +102,8 @@ const GuestTicket = forwardRef(({ imageUrl, qrContent, nom, handleCloseModalQrCo
                     position: 'absolute',
                     backgroundColor: '#fff',
                     padding: '4px',
-                    top: '0%',
-                    left: '5%'
+                    bottom: '5%',
+                    right: '2%'
                 }}
                 component='div'
             >
@@ -113,10 +112,11 @@ const GuestTicket = forwardRef(({ imageUrl, qrContent, nom, handleCloseModalQrCo
             <p
                 style={{
                     position: 'absolute',
-                    top: '75%',
-                    left: '25%',
+                    bottom: '-4%',
+                    right: '2%',
                     fontSize: 9,
-                    fontWeight: 'bold'
+                    fontWeight: 'bold',
+                    backgroundColor: '#fff',
                 }}
             >
                 {nom.toUpperCase()}

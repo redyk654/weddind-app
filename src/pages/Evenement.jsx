@@ -1,4 +1,4 @@
-import { Alert, Backdrop, Badge, Button, CircularProgress, Grid, InputAdornment, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material'
+import { Alert, AlertTitle, Backdrop, Badge, Button, Grid, InputAdornment, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
@@ -35,7 +35,7 @@ export const Evenement = () => {
       const guestsRef = db.collection('evenements').doc(eventId).collection('guestlist');
       const snapshot = await guestsRef.get();
       if (snapshot.empty) {
-        console.log('No matching documents.');
+        setIsLoading(false)
         return;
       }
       const tempList = []
@@ -82,16 +82,15 @@ export const Evenement = () => {
     const guest = guestsList.find(guest => guest.data.nom.toUpperCase() === guestName.toUpperCase() && guest.data.table === guestTable)
     if (guest) {
       if (guest.data.statut === 'checked') {
-        setTextSnackBar('Invité déjà scanné')
+        setTextSnackBar('Invité déjà scanné !')
       } else {
-        setTextSnackBar('Invité trouvé')
+        setTextSnackBar('Invité trouvé !')
         setGuestFound({nom: guest.data.nom, table: guest.data.table})
         updateGuestStatut(guest.id, 'checked')
       }
     } else {
-      setTextSnackBar('Invité non trouvé')
+      setTextSnackBar('Invité non trouvé !')
       setGuestFound({nom: '', table: ''})
-      // console.log('Invité non trouvé');
     }
     handleOpenSnackBar()
     setIsScanning(false)
@@ -104,17 +103,14 @@ export const Evenement = () => {
         open={isSnackBar}
         onClick={handleCloseSnackBar}
       >
-        <Snackbar
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-          open={isSnackBar}
-          autoHideDuration={15000}
-          onClose={handleCloseSnackBar}
-          message={`
-          ${textInSnackBar}
-          ${guestFound.nom.length > 0 && `Nom: ${guestFound.nom}`}
-          ${guestFound.nom.length > 0 && `Table: ${guestFound.table}`}
-        `}
-        />
+        <Alert variant='filled' severity='info' sx={{position: 'absolute', top: '15%'}}>
+          <AlertTitle>
+            {`${textInSnackBar}`}
+          </AlertTitle>
+          {`${guestFound.nom.length > 0 ? `Nom : ${guestFound.nom}` : ''}`}
+          <br />
+          {`${guestFound.nom.length > 0 ? `N° Table : ${guestFound.table}` : ''}`}
+        </Alert>
       </Backdrop>
       <Grid container spacing={2}>
         <Grid item xs={12}>
