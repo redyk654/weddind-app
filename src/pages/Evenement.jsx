@@ -83,6 +83,7 @@ export const Evenement = () => {
     if (guest) {
       if (guest.data.statut === 'checked') {
         setTextSnackBar('Invité déjà scanné !')
+        setGuestFound({nom: '', table: ''})
       } else {
         setTextSnackBar('Invité trouvé !')
         setGuestFound({nom: guest.data.nom, table: guest.data.table})
@@ -103,7 +104,11 @@ export const Evenement = () => {
         open={isSnackBar}
         onClick={handleCloseSnackBar}
       >
-        <Alert variant='filled' severity='info' sx={{position: 'absolute', top: '15%'}}>
+        <Alert
+          variant='filled'
+          severity={`${guestFound.nom.length > 0 ? 'success' : 'error'}`}
+          sx={{position: 'absolute', top: '15%'}}
+        >
           <AlertTitle>
             {`${textInSnackBar}`}
           </AlertTitle>
