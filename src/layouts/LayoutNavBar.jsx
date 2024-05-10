@@ -1,30 +1,24 @@
 import { Box, Button, Container } from '@mui/material'
 import React from 'react'
-import firebase from '../firebase'
 import { Outlet, useNavigate } from 'react-router-dom'
 import useAuth from '../hooks/useAuth'
 import ArrowBackIosRoundedIcon from '@mui/icons-material/ArrowBackIosRounded';
+import { authSignOut } from '../requests/RAuthentication'
+import CustomizedLoader from '../shared/components/CustomizedLoader';
 
 export default function LayoutNavBar() {
 
     const navigate = useNavigate();
     const { user, loading } = useAuth();
 
-    const signOut = () => {
-        firebase.auth().signOut()
-        navigate('/signin')
-    }
-
     const goBack = () => {
         navigate(-1)
     }
 
     if (loading) {
-        return <Container>
-                <div>
-                  <h1>Veuillez patienter...</h1>
-                </div>
-              </Container>
+        return (
+            <CustomizedLoader />
+        )
     }
 
     if (user) {
@@ -42,7 +36,7 @@ export default function LayoutNavBar() {
                     </Box>
                     <Box>
                         <Button
-                        onClick={signOut}
+                        onClick={authSignOut}
                         variant="outlined"
                         color='primary'
                         size='small'

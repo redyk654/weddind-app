@@ -1,4 +1,4 @@
-import { Alert, AlertTitle, Backdrop, Badge, Button, Grid, InputAdornment, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material'
+import { Badge, Button, Grid, InputAdornment, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
@@ -6,7 +6,7 @@ import AddIcon from '@mui/icons-material/Add'
 import firebase from '../firebase';
 import QrCodeScannerRoundedIcon from '@mui/icons-material/QrCodeScannerRounded';
 import { Scanner } from '@yudiel/react-qr-scanner';
-
+import AlertScannedResult from '../components/Evenement/AlertScannedResult';
 
 export const Evenement = () => {
 
@@ -15,7 +15,7 @@ export const Evenement = () => {
 
   const [guestsList, setGuestsList] = useState([])
   const [guestFound, setGuestFound] = useState({nom: '',table: ''})
-  const [isLoading, setIsLoading] = useState(true)
+  const [isFetchingGuestList, setIsFetchingGuestList] = useState(true)
   const [guestResearch, setGuestResearch] = useState('')
   const [isScanning, setIsScanning] = useState(false)
   const [isSnackBar, setIsSnackBar] = useState(false)
@@ -35,7 +35,7 @@ export const Evenement = () => {
       const guestsRef = db.collection('evenements').doc(eventId).collection('guestlist');
       const snapshot = await guestsRef.get();
       if (snapshot.empty) {
-        setIsLoading(false)
+        setIsFetchingGuestList(false)
         return;
       }
       const tempList = []
@@ -43,7 +43,7 @@ export const Evenement = () => {
         tempList.push({ id: doc.id, data: doc.data() });
       });
       setGuestsList(tempList)
-      setIsLoading(false)
+      setIsFetchingGuestList(false)
     } catch (error) {
       console.error("Erreur lors de la récupération des invités", error)
     }
@@ -99,24 +99,12 @@ export const Evenement = () => {
 
   return (
     <div>
-      <Backdrop
-        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={isSnackBar}
-        onClick={handleCloseSnackBar}
-      >
-        <Alert
-          variant='filled'
-          severity={`${guestFound.nom.length > 0 ? 'success' : 'error'}`}
-          sx={{position: 'absolute', top: '15%'}}
-        >
-          <AlertTitle>
-            {`${textInSnackBar}`}
-          </AlertTitle>
-          {`${guestFound.nom.length > 0 ? `Nom : ${guestFound.nom}` : ''}`}
-          <br />
-          {`${guestFound.nom.length > 0 ? `N° Table : ${guestFound.table}` : ''}`}
-        </Alert>
-      </Backdrop>
+      <AlertScannedResult
+        isSnackBar={isSnackBar}
+        handleCloseSnackBar={handleCloseSnackBar}
+        textInSnackBar={textInSnackBar}
+        guestFound={guestFound}
+      />
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <div className={`${!isScanning && 'd-none'}`}>
@@ -178,7 +166,7 @@ export const Evenement = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {isLoading ? <TableRow><TableCell>Chargement...</TableCell></TableRow> : filteredGuestsList.map((guest, index) => (
+                {isFetchingGuestList ? <TableRow><TableCell>Chargement...</TableCell></TableRow> : filteredGuestsList.map((guest, index) => (
                   <TableRow key={index}>
                     <TableCell align='left'>{guest.data.nom}</TableCell>
                     <TableCell align='right'>{guest.data.table}</TableCell>

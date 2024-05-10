@@ -1,73 +1,67 @@
 import React, { useEffect, useState } from 'react'
-import { Outlet, useNavigate, useParams } from 'react-router-dom'
-import { Button, Grid } from '@mui/material'
+import { Outlet, useParams } from 'react-router-dom'
+import { Grid } from '@mui/material'
 import useAuth from '../hooks/useAuth'
-import AddIcon from '@mui/icons-material/Add'
-import firebase from '../firebase'
 import CardEvent from '../components/Evenements/CardEvent'
+import AddEventButton from '../components/Evenements/AddEventButton'
+import NoEventFound from '../components/Evenements/NoEventFound'
+import LoadingData from '../shared/components/LoadingData'
+import { fetchEvents } from '../requests/RGet'
 
 export default function Evenements() {
-    const { eventId } = useParams();
-    const navigate = useNavigate();
-    const { user } = useAuth();
+  
+  const { eventId } = useParams();
+  const { user } = useAuth();
 
-    const [eventsList, setEventsList] = useState([])
+  const [eventsList, setEventsList] = useState([])
+  const [isFetching, setIsFetching] = useState(true)
 
-    useEffect(() => {
-      if (user) {
-        fecthEvents()
-      }
-    })
-
-    const fecthEvents = async () => {
-      try {
-        const db = firebase.firestore();
-        const eventsRef = db.collection('evenements');
-        const snapshot = await eventsRef.where('userId', '==', user.uid).get();
-        if (snapshot.empty) {
-            console.log('No matching documents.');
-            return;
-        }
-        const tempList = []
-        snapshot.forEach(doc => {
-          tempList.push({ id: doc.id, data: doc.data() });
-        });
-        setEventsList(tempList)
-      } catch (error) {
-        console.error("Erreur lors de la récupération des évènements", error)
-      }
+  useEffect(() => {
+    if (user) {
+      handleFetchEvents()
     }
+  })
 
-
-    if (eventId) {
-        return (
-            <Outlet />
-        )
+  const handleFetchEvents = async () => {
+    try {
+      const tempList = await fetchEvents(user.uid)
+      setEventsList(tempList)
+      setIsFetching(false)
+    } catch (error) {
+      console.error("Erreur lors de la récupération des évènements", error)
     }
+  }
 
-    return (
-      <div>
-          <div>
-            <h1>Evènements</h1>
-            <Button
-              onClick={() => navigate(`/layoutnavbar/evenements/${user.uid}/create`)}
-              variant="contained"
-              color='dark'
-              fullWidth
-              startIcon={<AddIcon />}
-            >
-              Ajouter un evenement
-            </Button>
+
+  if (eventId) {
+      return (
+        <Outlet />
+      )
+  }
+
+  return (
+    <div>
+        <div>
+          <h1>Evènements</h1>
+
+          <AddEventButton />
+
+          {!isFetching ?
             <Grid className='mt-3' container spacing={2}>
-              {eventsList.map((event, index) => (
-                <CardEvent
-                  key={index}
-                  event={event}
-                />
-              ))}
-            </Grid>
-          </div>
-      </div>
-    )
+              {eventsList.length > 0 ?
+                eventsList.map((event, index) => (
+                  <CardEvent
+                    key={index}
+                    event={event}
+                  />
+                )) :
+                <NoEventFound />
+              }
+            </Grid> :
+            <LoadingData />
+          }
+        </div>
+    </div>
+  )
 
 }
