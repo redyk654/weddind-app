@@ -38,10 +38,20 @@ export const Evenement = () => {
         setIsFetchingGuestList(false)
         return;
       }
-      const tempList = []
+      const guestByTable = {}
       snapshot.forEach(doc => {
-        tempList.push({ id: doc.id, data: doc.data() });
+        // tempList.push({ id: doc.id, data: doc.data() });
+        const guestData = doc.data()
+        const tableNum = guestData.table
+        if (!guestByTable[tableNum]) {
+          guestByTable[tableNum] = []
+        }
+        guestByTable[tableNum].push({ id: doc.id, data: guestData })
       });
+      const tempList = []
+      for (const tableNum in guestByTable) {
+        tempList.push(...guestByTable[tableNum])
+      }
       setGuestsList(tempList)
       setIsFetchingGuestList(false)
     } catch (error) {
@@ -135,7 +145,12 @@ export const Evenement = () => {
           </Button>
         </Grid>
         <Grid item xs={12}>
-          <h1>Liste des invités</h1>
+          <h1>
+            Liste des invités
+            <span>
+              {'(' + guestsList.length + ')'}
+            </span>
+          </h1>
         </Grid>
         <Grid item xs={12}>
           <TextField
