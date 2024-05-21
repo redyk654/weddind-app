@@ -1,19 +1,22 @@
-import { Badge, Button, Grid, InputAdornment, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material'
+import { Grid, InputAdornment, TextField } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
-import AddIcon from '@mui/icons-material/Add'
 import firebase from '../firebase';
-import QrCodeScannerRoundedIcon from '@mui/icons-material/QrCodeScannerRounded';
 import { Scanner } from '@yudiel/react-qr-scanner';
 import AlertScannedResult from '../components/Evenement/AlertScannedResult';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import GuestListPdf from '../components/Evenement/GuestListPdf';
+import DisplayGuestList from '../components/Evenement/DisplayGuestList';
+import ScanQrCodeBtn from '../components/Evenement/ScanQrCodeBtn';
+import AddGuestBtn from '../components/Evenement/AddGuestBtn';
 
 export const Evenement = () => {
 
   const { eventId } = useParams()
-  const navigate = useNavigate();
 
-  const [guestsList, setGuestsList] = useState([])
+  const [guestList, setGuestList] = useState([])
   const [guestFound, setGuestFound] = useState({nom: '',table: ''})
   const [isFetchingGuestList, setIsFetchingGuestList] = useState(true)
   const [guestResearch, setGuestResearch] = useState('')
@@ -21,7 +24,7 @@ export const Evenement = () => {
   const [isSnackBar, setIsSnackBar] = useState(false)
   const [textInSnackBar, setTextSnackBar] = useState('')
 
-  const filteredGuestsList = guestsList.filter(guest => {
+  const filteredGuestsList = guestList.filter(guest => {
     return guest.data.nom.toLowerCase().includes(guestResearch.toLowerCase())
   })
 
@@ -52,7 +55,7 @@ export const Evenement = () => {
       for (const tableNum in guestByTable) {
         tempList.push(...guestByTable[tableNum])
       }
-      setGuestsList(tempList)
+      setGuestList(tempList)
       setIsFetchingGuestList(false)
     } catch (error) {
       console.error("Erreur lors de la récupération des invités", error)
@@ -89,7 +92,7 @@ export const Evenement = () => {
     const data = text.split('-');
     const guestName = data[0]
     const guestTable = data[1]
-    const guest = guestsList.find(guest => guest.data.nom.toUpperCase() === guestName.toUpperCase() && guest.data.table === guestTable)
+    const guest = guestList.find(guest => guest.data.nom.toUpperCase() === guestName.toUpperCase() && guest.data.table === guestTable)
     if (guest) {
       if (guest.data.statut === 'checked') {
         setTextSnackBar('Invité déjà scanné !')
@@ -124,31 +127,24 @@ export const Evenement = () => {
                 enabled={isScanning}
             />
           </div>
-          <Button
-            sx={{ mb: 1 }}
-            onClick={scanQrCode}
-            variant="contained"
-            color='primary'
-            fullWidth
-            startIcon={<QrCodeScannerRoundedIcon />}
-          >
-            Scanner un QR Code
-          </Button>
-          <Button
-            onClick={() => navigate(`/layoutnavbar/evenements/${eventId}/addguest`)}
-            variant="contained"
-            color='dark'
-            fullWidth
-            startIcon={<AddIcon />}
-          >
-            Ajouter un invité
-          </Button>
+          <ScanQrCodeBtn scanQrCode={scanQrCode} />
+          <AddGuestBtn eventId={eventId} />
         </Grid>
         <Grid item xs={12}>
           <h1>
             Liste des invités
             <span>
-              {'(' + guestsList.length + ')'}
+              {'(' + guestList.length + ')'}
+            </span>
+            <span>
+              <PDFDownloadLink
+                document={<GuestListPdf guestList={guestList} />}
+                fileName="guestlist.pdf"
+              >
+                {({ loading }) =>
+                  loading ? 'Chargement du document...' : <PictureAsPdfIcon />
+                }
+              </PDFDownloadLink>
             </span>
           </h1>
         </Grid>
@@ -171,29 +167,10 @@ export const Evenement = () => {
           />
         </Grid>
         <Grid item xs={12} sx={{ width: '100%', overflow: 'hidden' }}>
-          <TableContainer sx={{ maxHeight: 440 }}>
-            <Table stickyHeader>
-              <TableHead>
-                <TableRow>
-                  <TableCell align='left'>Nom</TableCell>
-                  <TableCell align='right'>N° Table</TableCell>
-                  <TableCell align='center'>Status</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {isFetchingGuestList ? <TableRow><TableCell>Chargement...</TableCell></TableRow> : filteredGuestsList.map((guest, index) => (
-                  <TableRow key={index}>
-                    <TableCell align='left'>{guest.data.nom}</TableCell>
-                    <TableCell align='right'>{guest.data.table}</TableCell>
-                    <TableCell align='center'>
-                      <Badge color={`${guest.data.statut === "checked" ? "success" : "dark"}`} badgeContent={''}>
-                      </Badge>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          <DisplayGuestList
+            filteredGuestsList={filteredGuestsList}
+            isFetchingGuestList={isFetchingGuestList}
+          />
         </Grid>
       </Grid>
     </div>
